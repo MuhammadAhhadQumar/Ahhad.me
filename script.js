@@ -18,22 +18,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!navCenter.contains(e.target) && !burger.contains(e.target)) {
+            burger.classList.remove('active');
+            navCenter.classList.remove('active');
+        }
+    });
+
     // Active link highlighting
     const sections = document.querySelectorAll('section');
+    const navItems = document.querySelectorAll('.nav-link');
+
     window.addEventListener('scroll', () => {
         let current = '';
+        
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
             const sectionHeight = section.clientHeight;
-            if (scrollY >= sectionTop - 200) {
+            if (pageYOffset >= sectionTop - 60) {
                 current = section.getAttribute('id');
             }
         });
 
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href').slice(1) === current) {
-                link.classList.add('active');
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href').slice(1) === current) {
+                item.classList.add('active');
             }
         });
     });
@@ -65,7 +76,6 @@ const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.classList.add('animate');
-            observer.unobserve(entry.target); // Only animate once
         }
     });
 }, observerOptions);
@@ -102,4 +112,25 @@ function initTypingAnimation() {
             functional.style.opacity = '1';
         }
     }, 4000);
-} 
+}
+
+// Form submission handling
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Add your form submission logic here
+        alert('Thank you for your message! I will get back to you soon.');
+        contactForm.reset();
+    });
+}
+
+// Prevent scroll when mobile menu is open
+function toggleScrollLock() {
+    document.body.style.overflow = navCenter.classList.contains('active') ? 'hidden' : '';
+}
+
+burger.addEventListener('click', toggleScrollLock);
+navLinks.forEach(link => {
+    link.addEventListener('click', toggleScrollLock);
+}); 
